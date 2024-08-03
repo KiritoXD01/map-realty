@@ -1,20 +1,22 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import { PageProps } from '@/types';
 import {
     Table,
     TableBody,
-    TableCaption,
     TableCell,
     TableHead,
     TableHeader,
     TableRow,
 } from "@/shadcn/ui/table"
+import { Button } from "@/shadcn/ui/button"
+
 import { Project } from '@/types/types';
 
 
 export default function Dashboard({ auth, projects }: PageProps) {
     const items: Project[] = projects as Project[];
+    
     return (
         <AuthenticatedLayout
             user={auth.user}
@@ -36,6 +38,9 @@ export default function Dashboard({ auth, projects }: PageProps) {
                                 <TableRow>
                                     <TableCell className="font-medium">{item.name}</TableCell>
                                     <TableCell>{item.created_at}</TableCell>
+                                    <Button asChild>
+                                        <Link href={`/projects/${item.id}`}>Edit</Link>
+                                    </Button>
                                 </TableRow>
                             ))}
                         </TableBody>
