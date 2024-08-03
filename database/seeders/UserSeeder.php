@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Project;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -15,9 +16,11 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@test.com',
-        ]);
+        User::factory()
+            ->has(Project::factory()->count(3))
+            ->create([
+                'name' => 'Test User',
+                'email' => 'test@test.com',
+            ]);
     }
 }
