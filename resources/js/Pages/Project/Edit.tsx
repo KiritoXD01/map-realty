@@ -47,6 +47,36 @@ export default function Edit({
             id: "effect1",
             name: "test1",
         },
+        effect2: {
+            id: "effect2",
+            name: "test2",
+        },
+    };
+
+    const customScale = (scale: number): string => {
+        const min = parseInt(scale / 60 + "");
+        const second = ((scale % 60) + "").padStart(2, "0");
+        return `${min}:${second}`;
+    };
+
+    const createAction = (row: TimelineRow, time: number): void => {
+        setData((pre) => {
+            const rowIndex = pre.findIndex((item) => item.id === row.id);
+
+            const newAction: TimelineAction = {
+                id: `action${idRef.current++}`,
+                start: time,
+                end: time + 1,
+                effectId: "effect0",
+            };
+
+            pre[rowIndex] = {
+                ...row,
+                actions: row.actions.concat(newAction),
+            };
+
+            return [...pre];
+        });
     };
 
     const [data, setData] = useState(mockData);
@@ -57,7 +87,7 @@ export default function Edit({
             user={auth.user}
             header={
                 <h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                    {project.name}
+                    Editing: {project.name}
                 </h2>
             }
         >
@@ -68,27 +98,12 @@ export default function Edit({
                     effects={mockEffect}
                     autoScroll={true}
                     hideCursor={false}
-                    onDoubleClickRow={(e, { row, time }) => {
-                        setData((pre) => {
-                            const rowIndex = pre.findIndex(
-                                (item) => item.id === row.id
-                            );
-
-                            const newAction: TimelineAction = {
-                                id: `action${idRef.current++}`,
-                                start: time,
-                                end: time + 0.5,
-                                effectId: "effect0",
-                            };
-
-                            pre[rowIndex] = {
-                                ...row,
-                                actions: row.actions.concat(newAction),
-                            };
-
-                            return [...pre];
-                        });
-                    }}
+                    scale={10}
+                    scaleSplitCount={10}
+                    getScaleRender={(scale) => customScale(scale)}
+                    onDoubleClickRow={(e, { row, time }) =>
+                        createAction(row, time)
+                    }
                 />
             </div>
         </AuthenticatedLayout>
