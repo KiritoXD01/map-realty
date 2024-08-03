@@ -3,9 +3,11 @@ import { PageProps } from "@/types";
 import { Project } from "@/types/types";
 import {
     Timeline,
+    TimelineAction,
     TimelineEffect,
     TimelineRow,
 } from "@xzdarcy/react-timeline-editor";
+import { useRef, useState } from "react";
 
 export default function Edit({
     auth,
@@ -39,13 +41,16 @@ export default function Edit({
     const mockEffect: Record<string, TimelineEffect> = {
         effect0: {
             id: "effect0",
-            name: "效果0",
+            name: "test0",
         },
         effect1: {
             id: "effect1",
-            name: "效果1",
+            name: "test1",
         },
     };
+
+    const [data, setData] = useState(mockData);
+    const idRef = useRef(0);
 
     return (
         <AuthenticatedLayout
@@ -58,10 +63,32 @@ export default function Edit({
         >
             <div className="timeline-editor-container">
                 <Timeline
-                    editorData={mockData}
+                    onChange={setData}
+                    editorData={data}
                     effects={mockEffect}
                     autoScroll={true}
                     hideCursor={false}
+                    onDoubleClickRow={(e, { row, time }) => {
+                        setData((pre) => {
+                            const rowIndex = pre.findIndex(
+                                (item) => item.id === row.id
+                            );
+
+                            const newAction: TimelineAction = {
+                                id: `action${idRef.current++}`,
+                                start: time,
+                                end: time + 0.5,
+                                effectId: "effect0",
+                            };
+
+                            pre[rowIndex] = {
+                                ...row,
+                                actions: row.actions.concat(newAction),
+                            };
+
+                            return [...pre];
+                        });
+                    }}
                 />
             </div>
         </AuthenticatedLayout>

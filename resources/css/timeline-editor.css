@@ -1,2 +1,4 @@
-.timeline-editor-container {
+.timeline-editor-container > .timeline-editor {
+    width: 100%;
+    height: 400px;
 }
