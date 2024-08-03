@@ -66,7 +66,7 @@ export default function Edit({
             const newAction: TimelineAction = {
                 id: `action${idRef.current++}`,
                 start: time,
-                end: time + 1,
+                end: time + 5,
                 effectId: "effect0",
             };
 
@@ -83,14 +83,7 @@ export default function Edit({
     const idRef = useRef(0);
 
     return (
-        <AuthenticatedLayout
-            user={auth.user}
-            header={
-                <h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                    Editing: {project.name}
-                </h2>
-            }
-        >
+        <AuthenticatedLayout user={auth.user}>
             <div className="timeline-editor-container">
                 <Timeline
                     onChange={setData}

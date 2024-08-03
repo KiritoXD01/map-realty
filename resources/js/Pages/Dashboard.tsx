@@ -35,20 +35,25 @@ export default function Dashboard({
                             <TableRow>
                                 <TableHead>Name</TableHead>
                                 <TableHead>Created At</TableHead>
+                                <TableHead>Actions</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
                             {projects.map((item) => (
-                                <TableRow>
+                                <TableRow key={item.uuid}>
                                     <TableCell className="font-medium">
                                         {item.name}
                                     </TableCell>
                                     <TableCell>{item.created_at}</TableCell>
-                                    <Button asChild>
-                                        <Link href={`/projects/${item.id}`}>
-                                            Edit
-                                        </Link>
-                                    </Button>
+                                    <TableCell>
+                                        <Button asChild>
+                                            <Link
+                                                href={`/projects/${item.uuid}`}
+                                            >
+                                                Edit
+                                            </Link>
+                                        </Button>
+                                    </TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
