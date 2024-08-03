@@ -1,6 +1,6 @@
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link } from '@inertiajs/react';
-import { PageProps } from '@/types';
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import { Head, Link } from "@inertiajs/react";
+import { PageProps } from "@/types";
 import {
     Table,
     TableBody,
@@ -8,19 +8,23 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from "@/shadcn/ui/table"
-import { Button } from "@/shadcn/ui/button"
+} from "@/shadcn/ui/table";
+import { Button } from "@/shadcn/ui/button";
 
-import { Project } from '@/types/types';
+import { Project } from "@/types/types";
 
-
-export default function Dashboard({ auth, projects }: PageProps) {
-    const items: Project[] = projects as Project[];
-    
+export default function Dashboard({
+    auth,
+    projects,
+}: PageProps<{ projects: Project[] }>) {
     return (
         <AuthenticatedLayout
             user={auth.user}
-            header={<h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Dashboard</h2>}
+            header={
+                <h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+                    Dashboard
+                </h2>
+            }
         >
             <Head title="Dashboard" />
 
@@ -34,12 +38,16 @@ export default function Dashboard({ auth, projects }: PageProps) {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {items.map((item) => (
+                            {projects.map((item) => (
                                 <TableRow>
-                                    <TableCell className="font-medium">{item.name}</TableCell>
+                                    <TableCell className="font-medium">
+                                        {item.name}
+                                    </TableCell>
                                     <TableCell>{item.created_at}</TableCell>
                                     <Button asChild>
-                                        <Link href={`/projects/${item.id}`}>Edit</Link>
+                                        <Link href={`/projects/${item.id}`}>
+                                            Edit
+                                        </Link>
                                     </Button>
                                 </TableRow>
                             ))}
