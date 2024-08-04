@@ -1,11 +1,13 @@
+import { TimelineRow } from "@xzdarcy/react-timeline-editor";
+
 interface Model {
-    id: number;
+    id: number | string;
+    uuid?: string;
     created_at: string;
     updated_at: string;
 }
 
 export interface Project extends Model {
-    uuid: string;
-    id: number;
     name: string;
+    rows: TimelineRow[]
 }

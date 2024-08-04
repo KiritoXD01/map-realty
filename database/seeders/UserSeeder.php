@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\Project;
+use App\Models\TimelineRow;
+use App\Models\TimelineRowAction;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -17,7 +19,6 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         User::factory()
-            ->has(Project::factory()->count(3))
             ->create([
                 'name' => 'Test User',
                 'email' => 'test@test.com',

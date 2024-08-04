@@ -7,52 +7,15 @@ import {
     TimelineEffect,
     TimelineRow,
 } from "@xzdarcy/react-timeline-editor";
-import { useRef, useState } from "react";
+import { useState } from "react";
+import camelcaseKeys from 'camelcase-keys';
+import { v4 as uuidv4 } from 'uuid';
 
 export default function Edit({
     auth,
     project,
-}: PageProps<{ project: Project }>) {
-    const mockData: TimelineRow[] = [
-        {
-            id: "0",
-            actions: [
-                {
-                    id: "action00",
-                    start: 0,
-                    end: 2,
-                    effectId: "effect0",
-                },
-            ],
-        },
-        {
-            id: "1",
-            actions: [
-                {
-                    id: "action10",
-                    start: 1.5,
-                    end: 5,
-                    effectId: "effect1",
-                },
-            ],
-        },
-    ];
-
-    const mockEffect: Record<string, TimelineEffect> = {
-        effect0: {
-            id: "effect0",
-            name: "test0",
-        },
-        effect1: {
-            id: "effect1",
-            name: "test1",
-        },
-        effect2: {
-            id: "effect2",
-            name: "test2",
-        },
-    };
-
+    effects,
+}: PageProps<{ project: Project, effects: Record<string, TimelineEffect> }>) {
     const customScale = (scale: number): string => {
         const min = parseInt(scale / 60 + "");
         const second = ((scale % 60) + "").padStart(2, "0");
@@ -61,13 +24,13 @@ export default function Edit({
 
     const createAction = (row: TimelineRow, time: number): void => {
         setData((pre) => {
-            const rowIndex = pre.findIndex((item) => item.id === row.id);
+            const rowIndex = pre.findIndex(({ id }) => id === row.id);
 
             const newAction: TimelineAction = {
-                id: `action${idRef.current++}`,
+                id: uuidv4(),
                 start: time,
                 end: time + 5,
-                effectId: "effect0",
+                effectId: Object.values(effects)[0].id,
             };
 
             pre[rowIndex] = {
@@ -79,8 +42,7 @@ export default function Edit({
         });
     };
 
-    const [data, setData] = useState(mockData);
-    const idRef = useRef(0);
+    const [data, setData] = useState(project.rows.map((row) => camelcaseKeys(row as unknown as Record<string, unknown>, { deep: true })) as unknown as TimelineRow[]);
 
     return (
         <AuthenticatedLayout user={auth.user}>
@@ -88,7 +50,7 @@ export default function Edit({
                 <Timeline
                     onChange={setData}
                     editorData={data}
-                    effects={mockEffect}
+                    effects={effects}
                     autoScroll={true}
                     hideCursor={false}
                     scale={10}
