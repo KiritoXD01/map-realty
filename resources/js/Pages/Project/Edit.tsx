@@ -3,7 +3,6 @@ import { PageProps } from "@/types";
 import { Project } from "@/types/types";
 import {
     Timeline,
-    TimelineAction,
     TimelineEffect,
     TimelineRow,
 } from "@xzdarcy/react-timeline-editor";
@@ -26,16 +25,14 @@ export default function Edit({
         setData((pre) => {
             const rowIndex = pre.findIndex(({ id }) => id === row.id);
 
-            const newAction: TimelineAction = {
-                id: uuidv4(),
-                start: time,
-                end: time + 5,
-                effectId: Object.values(effects)[0].id,
-            };
-
             pre[rowIndex] = {
                 ...row,
-                actions: row.actions.concat(newAction),
+                actions: row.actions.concat({
+                    id: uuidv4(),
+                    start: time,
+                    end: time + 5,
+                    effectId: Object.values(effects)[0].id,
+                }),
             };
 
             return [...pre];
