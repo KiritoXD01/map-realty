@@ -26,6 +26,8 @@
         "vite": "^5.3"
     },
     "dependencies": {
+        "@radix-ui/react-dialog": "^1.1.1",
+        "@radix-ui/react-select": "^2.1.1",
         "@radix-ui/react-slot": "^1.1.0",
         "@xzdarcy/react-timeline-editor": "^0.1.9",
         "camelcase-keys": "^9.1.3",

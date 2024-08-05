@@ -9,6 +9,21 @@ import {
 import { useState } from "react";
 import camelcaseKeys from 'camelcase-keys';
 import { v4 as uuidv4 } from 'uuid';
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogFooter,
+} from "@/shadcn/ui/dialog";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/shadcn/ui/select"
+import { Button } from "@/shadcn/ui/button"
 
 export default function Edit({
     auth,
@@ -21,7 +36,12 @@ export default function Edit({
         return `${min}:${second}`;
     };
 
-    const createAction = (row: TimelineRow, time: number): void => {
+    const openCreateDialogForm = (row: TimelineRow, time: number): void => {
+        setShowCreateDialog(true);
+        setCurrentRow(row);
+    };
+
+    const createAction = () => {
         setData((pre) => {
             const rowIndex = pre.findIndex(({ id }) => id === row.id);
 
@@ -37,9 +57,11 @@ export default function Edit({
 
             return [...pre];
         });
-    };
+    }
 
     const [data, setData] = useState(project.rows.map((row) => camelcaseKeys(row as unknown as Record<string, unknown>, { deep: true })) as unknown as TimelineRow[]);
+    const [showCreateDialog, setShowCreateDialog] = useState(false);
+    const [currentRow, setCurrentRow] = useState<TimelineRow | null>(null);
 
     return (
         <AuthenticatedLayout user={auth.user}>
@@ -54,10 +76,32 @@ export default function Edit({
                     scaleSplitCount={10}
                     getScaleRender={(scale) => customScale(scale)}
                     onDoubleClickRow={(e, { row, time }) =>
-                        createAction(row, time)
+                        openCreateDialogForm(row, time)
                     }
                 />
             </div>
+            <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Add Action</DialogTitle>
+                    </DialogHeader>
+                    <Select>
+                        <SelectTrigger>
+                            <SelectValue placeholder="Choose an Effect" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {Object.values(effects).map((effect) => (
+                                <SelectItem key={effect.id} value={effect.id}>
+                                    {effect.name}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                    <DialogFooter>
+                        <Button type="button">Add to Timeline</Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </AuthenticatedLayout>
     );
 }
