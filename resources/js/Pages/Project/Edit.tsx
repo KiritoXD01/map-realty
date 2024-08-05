@@ -42,21 +42,7 @@ export default function Edit({
     };
 
     const createAction = () => {
-        setData((pre) => {
-            const rowIndex = pre.findIndex(({ id }) => id === row.id);
 
-            pre[rowIndex] = {
-                ...row,
-                actions: row.actions.concat({
-                    id: uuidv4(),
-                    start: time,
-                    end: time + 5,
-                    effectId: Object.values(effects)[0].id,
-                }),
-            };
-
-            return [...pre];
-        });
     }
 
     const [data, setData] = useState(project.rows.map((row) => camelcaseKeys(row as unknown as Record<string, unknown>, { deep: true })) as unknown as TimelineRow[]);
