@@ -55,7 +55,11 @@ export default function Edit({
     };
 
     const createAction = (data: z.infer<typeof CreateActionSchema>) => {
-        const payload = JSON.stringify({ ...actionData, effectId: data.effectId })
+        const payload = JSON.stringify({
+            ...actionData,
+            effectId: data.effectId
+        });
+
         window.Echo.connector.pusher.send_event('SendMessage', payload, 'channel.name')
 
         setActionData({
