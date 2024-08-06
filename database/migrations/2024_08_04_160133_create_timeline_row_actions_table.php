@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignUuid('timeline_row_id')->references('id')->on('timeline_rows')->cascadeOnDelete();
             $table->integer('start');
             $table->integer('end');
-            $table->string('effect_id');
+            $table->foreignUuid('effect_id')->references('id')->on('timeline_effects');
             $table->boolean('selected')->nullable();
             $table->boolean('flexible')->nullable();
             $table->boolean('movable')->nullable();

@@ -8,7 +8,6 @@ import {
 } from "@xzdarcy/react-timeline-editor";
 import { useState } from "react";
 import camelcaseKeys from 'camelcase-keys';
-import { v4 as uuidv4 } from 'uuid';
 import {
     Dialog,
     DialogContent,
@@ -23,7 +22,18 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/shadcn/ui/select"
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/shadcn/ui/form"
 import { Button } from "@/shadcn/ui/button"
+import { z } from 'zod'
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 export default function Edit({
     auth,
@@ -38,16 +48,40 @@ export default function Edit({
 
     const openCreateDialogForm = (row: TimelineRow, time: number): void => {
         setShowCreateDialog(true);
-        setCurrentRow(row);
+        setActionData({
+            rowId: row.id,
+            time,
+        });
     };
 
-    const createAction = () => {
+    const createAction = (data: z.infer<typeof CreateActionSchema>) => {
+        const payload = JSON.stringify({ ...actionData, effectId: data.effectId })
+        window.Echo.connector.pusher.send_event('SendMessage', payload, 'channel.name')
 
-    }
+        setActionData({
+            rowId: "",
+            time: 0,
+        });
+
+        setShowCreateDialog(false);
+    };
+
+    const CreateActionSchema = z.object({
+        effectId: z.string({
+            required_error: "An effect is required",
+        }).uuid(),
+    });
+
+    const createActionForm = useForm<z.infer<typeof CreateActionSchema>>({
+        resolver: zodResolver(CreateActionSchema),
+    });
 
     const [data, setData] = useState(project.rows.map((row) => camelcaseKeys(row as unknown as Record<string, unknown>, { deep: true })) as unknown as TimelineRow[]);
     const [showCreateDialog, setShowCreateDialog] = useState(false);
-    const [currentRow, setCurrentRow] = useState<TimelineRow | null>(null);
+    const [actionData, setActionData] = useState({
+        rowId: "",
+        time: 0,
+    });
 
     return (
         <AuthenticatedLayout user={auth.user}>
@@ -71,21 +105,31 @@ export default function Edit({
                     <DialogHeader>
                         <DialogTitle>Add Action</DialogTitle>
                     </DialogHeader>
-                    <Select>
-                        <SelectTrigger>
-                            <SelectValue placeholder="Choose an Effect" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            {Object.values(effects).map((effect) => (
-                                <SelectItem key={effect.id} value={effect.id}>
-                                    {effect.name}
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
-                    <DialogFooter>
-                        <Button type="button">Add to Timeline</Button>
-                    </DialogFooter>
+                    <Form {...createActionForm}>
+                        <form onSubmit={createActionForm.handleSubmit(createAction)}>
+                            <FormField control={createActionForm.control} name="effectId" render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Choose an Effect</FormLabel>
+                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                        <FormControl>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Select an Effect" />
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                            {Object.values(effects).map((effect) => (
+                                                <SelectItem key={effect.id} value={effect.id}>
+                                                    {effect.name}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                    <FormMessage />
+                                </FormItem>
+                            )} />
+                            <Button type="submit">Add to Timeline</Button>
+                        </form>
+                    </Form>
                 </DialogContent>
             </Dialog>
         </AuthenticatedLayout>

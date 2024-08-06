@@ -2,9 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\Project;
-use App\Models\TimelineRow;
-use App\Models\TimelineRowAction;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;

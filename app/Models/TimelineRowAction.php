@@ -12,6 +12,7 @@ class TimelineRowAction extends Model
     use HasFactory, HasUuids;
 
     protected $fillable = [
+        'timeline_row_id',
         'start',
         'end',
         'effect_id',
